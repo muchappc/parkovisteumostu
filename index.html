@@ -290,6 +290,27 @@
     }
     .toast.show { opacity: 1; }
 
+    /* QR code */
+    .qr-wrap {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 0 4px;
+    }
+    .qr-wrap.on { display: flex; }
+    .qr-wrap img {
+      width: 160px;
+      height: 160px;
+      border-radius: 8px;
+      border: 0.5px solid var(--border);
+      image-rendering: pixelated;
+    }
+    .qr-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     @media (max-width: 460px) {
       .card { padding: 1.5rem 1.25rem 1.25rem; }
       .divider { margin: 0 -1.25rem 1.25rem; }
@@ -386,6 +407,11 @@
     </div>
   </div>
 
+  <div class="qr-wrap" id="qr-wrap">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAa4AAAGuAQAAAADgjt83AAADO0lEQVR4nO2cQYrrMAyGfz0HZunAO0CPkrnBnGlu5hylBxhwlwUHvYVk2W3nbYYwIVhZhKTJR2MQsv5fTojxg2378xMKcMwxxxxzbFwMzFzqcSxgzk9HrFvqiVOMzbF9sRoHgYnmwMzXNwYQmPk6gYiIaryUwx7SsaOxlYgAAJywEdZ5I3qPBfQeC4BYAGAjovnAh3TsKGx6ONsmRsyghbcJ6/w18TpnYEl4kkKnGJtje2HT8w9LBrDOXxIbtFwJLOGzw785dmpsYdYwWGdA65IbEX9eWGoVSJmSD3xIx47FiIiI3uWnjbBe7sSfF61GpFbBjYiIpsMe0rHDMHC/FYiUSaKEA8suvdx3irE5thcmfonsEgAsrFZJ3QXGYpbKojefYmyO7YVVqyRyDYZoCQVBLtbTLqROMTbH9sL6KJEtMmPJQXcAoDGUA5u1doqxObYXpg79wkVEcK1GYBMQc6tQIELHo2QwrEZJBgCELmV0FUp6uNmjZDjsoS7JQDfPqDcSarcvFrnqUTIc9m0ukQBZuEhJomqn1rYeJcNheEkUuZ961Dmx0sWr1yExc8tq3kiAHZkSlq35ax4lY2ESJd08g1hQvVdog2dpk032KBkQM9s1sNYgZsXKLgfz3Nj9kkGxmktaykCw096UVTns1euImC1mRK9nklyrNlo79T7OkFitXnNzYR8yiPZxNJeY5DnF2BzbC7PqFYBNNrVWqbckmB/rrtqIWLdupDZzAncaR7ZY4NXrwFi/uqhbPgB0GqetJoB3+4bETPX21poWJxoRZs7rzORRMhz2oHEA1Hdvgi0y6RcXmKVyirE5thfWRYn2hE3yJFhjONYko4RHyVhYN500UVOFDnNblKQXXOOMiL2soTeftfVxWmPY7jvF2BzbC3v55oB6I6VPKAnVUEuucUbE+hwhlUc0/SvmfOfLA66ER8b0mwMbMV8nfQ00AZCsss4AEU3gFO902EM6dhTWvbBVu3024+TWMTaN432cEbGXbw6sH3fi9QPg9VImAkJh3P6qCMbtjX//IR07GHupSzrThNu7Wm39mtclA2L/0TiAzjgmeVoMeZQMh5F/79UxxxxzzLFfwf4BzT77MBj4vOQAAAAASUVORK5CYII=" alt="QR kód pro platbu převodem" />
+    <span class="qr-label">Naskenujte v mobilním bankovnictví</span>
+  </div>
+
   <div class="note" id="note">
     Stripe Payment Link má pevnou částku 30 Kč. Chcete-li zaplatit jinou částku, zvolte bankovní převod.
   </div>
@@ -397,7 +423,7 @@
     <span id="pay-label">Zaplatit 30 Kč kartou</span>
   </button>
 
-  <div class="footer">Platba je dobrovolná. Děkujeme za vaši podporu.</div>
+  <div class="footer">Prostor je monitorován.</div>
 </div>
 
 <script>
@@ -427,6 +453,7 @@
     document.getElementById('btn-card').classList.toggle('on', m === 'card');
     document.getElementById('btn-bank').classList.toggle('on', m === 'bank');
     document.getElementById('bank-box').classList.toggle('on', m === 'bank');
+    document.getElementById('qr-wrap').classList.toggle('on', m === 'bank');
     updatePayBtn();
   }
 
@@ -451,6 +478,7 @@
     } else {
       copyText('670100-2213476589/6210');
       document.getElementById('bank-box').classList.add('on');
+      document.getElementById('qr-wrap').classList.add('on');
     }
   }
 
