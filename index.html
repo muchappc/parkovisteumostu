@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parkoviště Vratimov u mostu — Dobrovolné parkovné</title>
+  <meta name="description" content="Zaplaťte dobrovolné parkovné kartou nebo převodem." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --border: rgba(0,0,0,0.10);
+      --border-strong: rgba(0,0,0,0.22);
+      --text: #1a1a18;
+      --muted: #6b6b67;
+      --hint: #9e9e9a;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #181816;
+        --surface: #242422;
+        --border: rgba(255,255,255,0.10);
+        --border-strong: rgba(255,255,255,0.25);
+        --text: #f0efe9;
+        --muted: #9e9e9a;
+        --hint: #6b6b67;
+      }
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem 2rem 1.5rem;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+    }
+
+    /* Header */
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 1.75rem;
+    }
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .logo-icon svg { width: 22px; height: 22px; stroke: var(--muted); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .logo-name { font-size: 15px; font-weight: 500; }
+    .logo-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* Amount */
+    .section-label {
+      font-size: 11px;
+      color: var(--hint);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .amount-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+    .amount-num {
+      font-size: 42px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      flex: 1;
+    }
+    .amount-cur {
+      font-size: 18px;
+      color: var(--muted);
+      align-self: flex-end;
+      padding-bottom: 5px;
+    }
+    .edit-btn {
+      background: none;
+      border: 0.5px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--muted);
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .edit-btn:hover { background: var(--bg); }
+
+    .amount-edit-row {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .amount-edit-row.on { display: flex; }
+    .amount-input {
+      flex: 1;
+      font-family: inherit;
+      font-size: 32px;
+      font-weight: 500;
+      border: none;
+      border-bottom: 2px solid var(--border-strong);
+      background: none;
+      color: var(--text);
+      padding: 4px 0;
+      outline: none;
+    }
+    .amount-input:focus { border-color: var(--text); }
+
+    /* Divider */
+    .divider {
+      height: 0.5px;
+      background: var(--border);
+      margin: 0 -2rem 1.5rem;
+    }
+
+    /* Methods */
+    .method-btn {
+      width: 100%;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+    .method-btn:hover { border-color: var(--border-strong); }
+    .method-btn.on { border: 1.5px solid var(--text); background: var(--surface); }
+
+    .method-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .method-icon svg { width: 18px; height: 18px; stroke: var(--text); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .method-title { font-size: 14px; font-weight: 500; }
+    .method-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .method-check {
+      margin-left: auto;
+      width: 18px;
+      height: 18px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .method-check svg { width: 18px; height: 18px; stroke: var(--text); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .method-btn.on .method-check { opacity: 1; }
+
+    /* Bank details */
+    .bank-box {
+      display: none;
+      background: var(--bg);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 1rem;
+    }
+    .bank-box.on { display: block; }
+    .bank-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 0.5px solid var(--border);
+    }
+    .bank-row:last-child { border-bottom: none; }
+    .bank-key { font-size: 12px; color: var(--muted); }
+    .bank-val {
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--hint);
+      padding: 0;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+    .copy-btn:hover { color: var(--text); }
+    .copy-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Note */
+    .note {
+      display: none;
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+    .note.on { display: block; }
+
+    /* Pay button */
+    .pay-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--text);
+      color: var(--surface);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: opacity 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .pay-btn:hover { opacity: 0.82; }
+    .pay-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* Footer */
+    .footer {
+      font-size: 11px;
+      color: var(--hint);
+      text-align: center;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: var(--surface);
+      font-family: inherit;
+      font-size: 13px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      z-index: 99;
+    }
+    .toast.show { opacity: 1; }
+
+    @media (max-width: 460px) {
+      .card { padding: 1.5rem 1.25rem 1.25rem; }
+      .divider { margin: 0 -1.25rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast" id="toast">Zkopírováno</div>
+
+<div class="card">
+  <div class="logo-row">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 17H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h14l4 4v4a2 2 0 0 1-2 2h-2"/>
+        <circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/>
+        <path d="M5 9V5h10"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-name">Parkoviště Vratimov u mostu</div>
+      <div class="logo-sub">Dobrovolné parkovné</div>
+    </div>
+  </div>
+
+  <div class="section-label">Částka</div>
+  <div class="amount-row" id="amount-display-row">
+    <span class="amount-num" id="amount-shown">30</span>
+    <span class="amount-cur">Kč</span>
+    <button class="edit-btn" onclick="toggleEdit()">Upravit</button>
+  </div>
+  <div class="amount-edit-row" id="amount-edit-row">
+    <input class="amount-input" id="amount-input" type="number" min="1" value="30" oninput="updateAmount()" />
+    <span class="amount-cur">Kč</span>
+    <button class="edit-btn" onclick="toggleEdit()">Hotovo</button>
+  </div>
+
+  <div class="divider"></div>
+  <div class="section-label">Způsob platby</div>
+
+  <button class="method-btn on" id="btn-card" onclick="selectMethod('card')">
+    <div class="method-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="2" y="5" width="20" height="14" rx="2"/>
+        <path d="M2 10h20"/>
+      </svg>
+    </div>
+    <div>
+      <div class="method-title">Platba kartou</div>
+      <div class="method-sub">Zabezpečená platba přes Stripe</div>
+    </div>
+    <div class="method-check">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+  </button>
+
+  <button class="method-btn" id="btn-bank" onclick="selectMethod('bank')">
+    <div class="method-icon">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 22V12M21 22V12M12 22V12M2 12h20M12 2L2 7h20L12 2z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="method-title">Bankovní převod</div>
+      <div class="method-sub">Údaje účtu ke zkopírování</div>
+    </div>
+    <div class="method-check">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+  </button>
+
+  <div class="bank-box" id="bank-box">
+    <div class="bank-row">
+      <span class="bank-key">Číslo účtu</span>
+      <span class="bank-val">
+        670100-2213476589/6210
+        <button class="copy-btn" onclick="copyText('670100-2213476589/6210')" title="Kopírovat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-key">Variabilní symbol</span>
+      <span class="bank-val">
+        2025001
+        <button class="copy-btn" onclick="copyText('2025001')" title="Kopírovat">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        </button>
+      </span>
+    </div>
+    <div class="bank-row">
+      <span class="bank-key">Částka</span>
+      <span class="bank-val" id="bank-amount">30 Kč</span>
+    </div>
+  </div>
+
+  <div class="note" id="note">
+    Stripe Payment Link má pevnou částku 30 Kč. Chcete-li zaplatit jinou částku, zvolte bankovní převod.
+  </div>
+
+  <button class="pay-btn" id="pay-btn" onclick="handlePay()">
+    <svg viewBox="0 0 24 24" aria-hidden="true" id="pay-icon">
+      <rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>
+    </svg>
+    <span id="pay-label">Zaplatit 30 Kč kartou</span>
+  </button>
+
+  <div class="footer">Platba je dobrovolná. Děkujeme za vaši podporu.</div>
+</div>
+
+<script>
+  const STRIPE_URL = 'https://buy.stripe.com/14A4gyfPk7ke6ZH35K5Ne01';
+  let method = 'card';
+  let amount = 30;
+  let editing = false;
+
+  function toggleEdit() {
+    editing = !editing;
+    document.getElementById('amount-display-row').style.display = editing ? 'none' : 'flex';
+    document.getElementById('amount-edit-row').classList.toggle('on', editing);
+    if (editing) document.getElementById('amount-input').focus();
+    updatePayBtn();
+  }
+
+  function updateAmount() {
+    const val = parseInt(document.getElementById('amount-input').value, 10);
+    amount = isNaN(val) || val < 1 ? 1 : val;
+    document.getElementById('amount-shown').textContent = amount;
+    document.getElementById('bank-amount').textContent = amount + ' Kč';
+    updatePayBtn();
+  }
+
+  function selectMethod(m) {
+    method = m;
+    document.getElementById('btn-card').classList.toggle('on', m === 'card');
+    document.getElementById('btn-bank').classList.toggle('on', m === 'bank');
+    document.getElementById('bank-box').classList.toggle('on', m === 'bank');
+    updatePayBtn();
+  }
+
+  function updatePayBtn() {
+    const label = document.getElementById('pay-label');
+    const note = document.getElementById('note');
+    const icon = document.getElementById('pay-icon');
+    if (method === 'card') {
+      icon.innerHTML = '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>';
+      label.textContent = 'Zaplatit ' + amount + ' Kč kartou';
+      note.classList.toggle('on', amount !== 30);
+    } else {
+      icon.innerHTML = '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>';
+      label.textContent = 'Zkopírovat číslo účtu';
+      note.classList.remove('on');
+    }
+  }
+
+  function handlePay() {
+    if (method === 'card') {
+      window.open(STRIPE_URL, '_blank');
+    } else {
+      copyText('670100-2213476589/6210');
+      document.getElementById('bank-box').classList.add('on');
+    }
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(showToast).catch(showToast);
+    } else {
+      showToast();
+    }
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+</script>
+</body>
+</html>
